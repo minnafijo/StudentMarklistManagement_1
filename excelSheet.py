@@ -83,10 +83,10 @@ def view_details_screen():
     submit = Button(window, text="Save", command=update_excel)
     submit.grid(row=15, column=8)
 
-    # create a Back Button to the root window
-    back = Button(window, text="Back to Main", fg="Black",
+    # create a Back Button to the Menu window
+    back = Button(window, text="Back to Menu", fg="Black",
                   bg="Blue", command=close_view)
-    back.grid(row=12, column=1)
+    back.grid(row=15, column=1)
 
     window.mainloop()
 
@@ -113,7 +113,6 @@ def update_excel():
 
 
 def main_screen():
-
     global root1
     root1 = Tk()
     # set the background colour of GUI window
