@@ -113,6 +113,7 @@ def update_excel():
 
 
 def main_screen():
+
     global root1
     root1 = Tk()
     # set the background colour of GUI window
