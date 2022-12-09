@@ -9,6 +9,11 @@ The objective of this project is to have a proper program to help the teachers a
 their student mark details.This program will read all the data from an excel sheet. The user can Add, View and 
 update the student mark details with the help of a simple graphical user interface. 
 
+The program use a class object of Student which consists of methods to calculate the total marks and grade and then saving the details to the excel sheet.
+The program takes cares the exceptions of improper values in the student deatials fields.
+
+
+
 ## Getting Started
 
 ### Dependencies
