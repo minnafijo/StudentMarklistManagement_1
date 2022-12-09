@@ -1,18 +1,13 @@
 # StudentMarklistManagement
 
 Student Marklist Management System is a program created to keep a record of the student details of each 
-class and also the mark acquired by students,calculate the total marks and grade them accordingly.
+class and also the marks acquired by students,calculate the total marks and grade them accordingly.
 
 
 ## Description
 The objective of this project is to have a proper program to help the teachers and school staffs to manage 
-their student details.This program will read all the data from an excel sheet. The user can Add, View and 
-update the student details with the help of a simple graphical user interface. 
-
-Our project starts with a GUI for selecting desired class.
-Then we move to the next page Student MarkList Management System where we have options to Add,View and Update the student and markdetails.
-
-
+their student mark details.This program will read all the data from an excel sheet. The user can Add, View and 
+update the student mark details with the help of a simple graphical user interface. 
 
 ## Getting Started
 
