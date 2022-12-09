@@ -1,17 +1,13 @@
 # import openpyxl and tkinter modules
-import datetime
 
 from openpyxl import *
 from tkinter import *
-from tkcalendar import Calendar, DateEntry
-
+import datetime
 import os
 
 dirname = os.path.dirname(__file__)
 path = dirname + '\StudentDetails.xlsx'
 #path = os.path.join(dirname, '\StudentMarklistManagement\StudentDetails.xlsx')
-
-
 #path = 'C:\\Users\\Minna\\Desktop\\ReDi_Python\\StudentMarklistManagement\\StudentDetails.xlsx'
 
 global stud
@@ -19,7 +15,7 @@ global root
 global root1
 global sec_screen
 global class_Selected
-#global update_details
+
 
 # globally declare wb and sheet variable
 # opening the existing excel file
@@ -30,13 +26,13 @@ sheetTemp = wb.active
 # Dictionary for storing the text widget references
 cells = {}
 
-
+#Selected class from dropdown menu
 def class_select():
     global class_Selected
     class_Selected = clicked.get()
     close_root1()
 
-
+#Selected student from dropdown menu
 def name_select():
     global name_Selected
     name_Selected = nameclicked.get()
@@ -46,7 +42,6 @@ def name_select():
 
 def view_details_screen():
     global window
-
     # Create an instance of tkinter frame
     window = Tk()
 
@@ -66,8 +61,6 @@ def view_details_screen():
     n_cols = df.max_column
 
     # Extracting columns from the data and
-    # creating text widget with some
-    # background color
     column_names = df.columns
     i = 0
     for j, col in enumerate(column_names):
@@ -239,7 +232,7 @@ def second_Screen():
 
     # create a Form label
     heading1 = Label(sec_screen, text="Student Marklist", bg="light green")
-    heading1.grid(row=0, column=3)
+    heading1.pack()
 
     # create a Form label
     #heading2 = Label(sec_screen, text="Mark List", bg="light green")
@@ -248,15 +241,15 @@ def second_Screen():
     # create a Submit Button and place into the root window
     adddetails = Button(sec_screen, text="Add Details", fg="Black",
                     bg="Yellow", command = add_details)
-    adddetails.grid(row=3, column=3)
+    adddetails.pack()
 
     viewdetails = Button(sec_screen, text="View Details", fg="Black",
                         bg="Yellow", command=open_viewdetails)
-    viewdetails.grid(row=4, column=3)
+    viewdetails.pack()
 
     updatedetails = Button(sec_screen, text="Update Details", fg="Black",
                          bg="Yellow", command=open_updatedetails)
-    updatedetails.grid(row=5, column=3)
+    updatedetails.pack()
 
     #deletedetails = Button(sec_screen, text="Delete Details", fg="Black",
                            #bg="Yellow", command=select_details_screen)
@@ -265,7 +258,7 @@ def second_Screen():
     # create a Back Button to the root window
     back = Button(sec_screen, text="Back to Main", fg="Black",
                     bg="light blue", command=close_sec)
-    back.grid(row=12, column=3)
+    back.pack()
 
 
 
@@ -368,19 +361,19 @@ def add_details():
     address = Label(root, text="Address", bg="light green")
 
     # create a mark1 label
-    mark1 = Label(root, text="mark1", bg="light green")
+    mark1 = Label(root, text="Mark1", bg="light green")
 
     # create a mark2 label
-    mark2 = Label(root, text="mark2", bg="light green")
+    mark2 = Label(root, text="Mark2", bg="light green")
 
     # create a mark3 label
-    mark3 = Label(root, text="mark3", bg="light green")
+    mark3 = Label(root, text="Mark3", bg="light green")
 
     # create a mark4 label
-    mark4 = Label(root, text="mark4", bg="light green")
+    mark4 = Label(root, text="Mark4", bg="light green")
 
     # create a mark5 label
-    mark5 = Label(root, text="mark5", bg="light green")
+    mark5 = Label(root, text="Mark5", bg="light green")
 
     # grid method is used for placing
     # the widgets at respective positions
