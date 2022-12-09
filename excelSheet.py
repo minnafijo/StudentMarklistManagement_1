@@ -111,10 +111,24 @@ def update_excel():
         When user clicks the "Save" button, modified data
         will be saved in excel file
         """
+    student_updated = FALSE
     for i in range(1, n_rows):
         for j in range(1, n_cols):
             if df.cell(row=i+1, column=j+1).value != cells[(i-1, j)].get("1.0", "end-1c"):
+                updated_Stud_row = i+1
+                student_updated = TRUE
                 df.cell(row=i+1, column=j+1).value = cells[(i-1, j)].get("1.0", "end-1c")
+        if student_updated == TRUE:
+            m1 = int(df.cell(row=updated_Stud_row, column=6).value)
+            m2 = int(df.cell(row=updated_Stud_row, column=7).value)
+            m3 = int(df.cell(row=updated_Stud_row, column=8).value)
+            m4 = int(df.cell(row=updated_Stud_row, column=9).value)
+            m5 = int(df.cell(row=updated_Stud_row, column=10).value)
+            total = m1+m2+m3+m4+m5
+            df.cell(row=updated_Stud_row, column=11).value = total
+            df.cell(row=updated_Stud_row, column=12).value = calc_grade(total)
+            student_updated=FALSE
+                #obj=Student(df.cell(row=i+1, column=j+1).value)
 
     wb.save(path)
 
@@ -221,7 +235,7 @@ def second_Screen():
     sec_screen.title("Marklist Management")
 
     # set the configuration of GUI window
-    sec_screen.geometry("500x300")
+    sec_screen.geometry("600x400")
 
     # create a Form label
     heading1 = Label(sec_screen, text="Student Marklist", bg="light green")
@@ -314,7 +328,7 @@ def add_details():
     root.title("Registration form")
 
     # set the configuration of GUI window
-    root.geometry("500x300")
+    root.geometry("500x400")
 
     excel(sheetTemp)
 
@@ -491,6 +505,22 @@ def read_details(name: str):
 def show_student():
     #display student names.
     print("show details")
+
+#Function to calculate garde
+
+def calc_grade(total):
+    if total >= 450:
+        grade = 'A'
+    elif total >= 400:
+        grade = 'B'
+    elif total >= 350:
+        grade = 'C'
+    elif total >= 300:
+        grade = 'D'
+    else:
+        grade = 'F'
+
+    return grade
 
 # Function for clearing the
 # contents of text entry boxes
