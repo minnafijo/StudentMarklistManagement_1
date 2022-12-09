@@ -1,6 +1,10 @@
 # import openpyxl and tkinter modules
+import datetime
+
 from openpyxl import *
 from tkinter import *
+from tkcalendar import Calendar, DateEntry
+
 import os
 
 dirname = os.path.dirname(__file__)
@@ -15,6 +19,7 @@ global root
 global root1
 global sec_screen
 global class_Selected
+#global update_details
 
 # globally declare wb and sheet variable
 # opening the existing excel file
@@ -41,6 +46,7 @@ def name_select():
 
 def view_details_screen():
     global window
+
     # Create an instance of tkinter frame
     window = Tk()
 
@@ -51,7 +57,7 @@ def view_details_screen():
     window.title("View Details")
 
     # set the configuration of GUI window
-    window.geometry("1000x800")
+    window.geometry("1500x800")
 
     df = wb[class_Selected]
 
@@ -79,13 +85,14 @@ def view_details_screen():
             text.insert(INSERT, content)
             cells[(i, j)] = text
 
-            # Create button, it will change label text
-    submit = Button(window, text="Save", command=update_excel)
-    submit.grid(row=15, column=8)
+    if update_details == TRUE:     #Save button will be visible
+        # Create button, it will change label text
+        submit = Button(window, text="Save", command=update_excel)
+        submit.grid(row=15, column=8)
 
     # create a Back Button to the Menu window
     back = Button(window, text="Back to Menu", fg="Black",
-                  bg="Blue", command=close_view)
+                  bg="light blue", command=close_view)
     back.grid(row=15, column=1)
 
     window.mainloop()
@@ -126,7 +133,6 @@ def main_screen():
 
     # Dropdown menu options
     options = [
-        " - ",
         "Class1",
         "Class2",
         "Class3",
@@ -212,40 +218,40 @@ def second_Screen():
     sec_screen.configure(background='light green')
 
     # set the title of GUI window
-    sec_screen.title("Menu")
+    sec_screen.title("Marklist Management")
 
     # set the configuration of GUI window
     sec_screen.geometry("500x300")
 
     # create a Form label
-    heading1 = Label(sec_screen, text="Student List", bg="light green")
-    heading1.grid(row=0, column=2)
+    heading1 = Label(sec_screen, text="Student Marklist", bg="light green")
+    heading1.grid(row=0, column=3)
 
     # create a Form label
-    heading2 = Label(sec_screen, text="Mark List", bg="light green")
-    heading2.grid(row=0, column=5)
+    #heading2 = Label(sec_screen, text="Mark List", bg="light green")
+    #heading2.grid(row=0, column=5)
 
     # create a Submit Button and place into the root window
     adddetails = Button(sec_screen, text="Add Details", fg="Black",
                     bg="Yellow", command = add_details)
-    adddetails.grid(row=3, column=2)
+    adddetails.grid(row=3, column=3)
 
     viewdetails = Button(sec_screen, text="View Details", fg="Black",
                         bg="Yellow", command=open_viewdetails)
-    viewdetails.grid(row=4, column=2)
+    viewdetails.grid(row=4, column=3)
 
     updatedetails = Button(sec_screen, text="Update Details", fg="Black",
-                         bg="Yellow", command=select_details_screen)
-    updatedetails.grid(row=5, column=2)
+                         bg="Yellow", command=open_updatedetails)
+    updatedetails.grid(row=5, column=3)
 
-    deletedetails = Button(sec_screen, text="Delete Details", fg="Black",
-                           bg="Yellow", command=select_details_screen)
-    deletedetails.grid(row=6, column=2)
+    #deletedetails = Button(sec_screen, text="Delete Details", fg="Black",
+                           #bg="Yellow", command=select_details_screen)
+    #deletedetails.grid(row=6, column=3)
 
     # create a Back Button to the root window
     back = Button(sec_screen, text="Back to Main", fg="Black",
-                    bg="Blue", command=close_sec)
-    back.grid(row=12, column=1)
+                    bg="light blue", command=close_sec)
+    back.grid(row=12, column=3)
 
 
 
@@ -254,11 +260,16 @@ def excel(sheet = "Template"):
     # excel spreadsheet
     sheet.column_dimensions['A'].width = 30
     sheet.column_dimensions['B'].width = 10
-    sheet.column_dimensions['C'].width = 10
+    sheet.column_dimensions['C'].width = 20
     sheet.column_dimensions['D'].width = 20
-    sheet.column_dimensions['E'].width = 20
-    sheet.column_dimensions['F'].width = 40
-    sheet.column_dimensions['G'].width = 50
+    sheet.column_dimensions['E'].width = 30
+    sheet.column_dimensions['F'].width = 20
+    sheet.column_dimensions['G'].width = 20
+    sheet.column_dimensions['H'].width = 20
+    sheet.column_dimensions['I'].width = 20
+    sheet.column_dimensions['J'].width = 20
+    sheet.column_dimensions['K'].width = 20
+    sheet.column_dimensions['L'].width = 20
 
     # write given data to an excel spreadsheet
     # at particular location
@@ -266,9 +277,14 @@ def excel(sheet = "Template"):
     sheet.cell(row=1, column=2).value = "Roll.No"
     sheet.cell(row=1, column=3).value = "Date of Birth"
     sheet.cell(row=1, column=4).value = "Class"
-    sheet.cell(row=1, column=5).value = "Weight"
-    sheet.cell(row=1, column=6).value = "Height"
-    sheet.cell(row=1, column=7).value = "Address"
+    sheet.cell(row=1, column=5).value = "Address"
+    sheet.cell(row=1, column=6).value = "Mark1"
+    sheet.cell(row=1, column=7).value = "Mark2"
+    sheet.cell(row=1, column=8).value = "Mark3"
+    sheet.cell(row=1, column=9).value = "Mark4"
+    sheet.cell(row=1, column=10).value = "Mark5"
+    sheet.cell(row=1, column=11).value = "Total"
+    sheet.cell(row=1, column=12).value = "Grade"
 
 
 # Driver code
@@ -281,9 +297,15 @@ def add_details():
     global rollno_field
     global dob_field
     global class_field
-    global weight_field
-    global height_field
     global address_field
+    global mark1_field
+    global mark2_field
+    global mark3_field
+    global mark4_field
+    global mark5_field
+    global answer
+
+
     root = Tk()
     # set the background colour of GUI window
     root.configure(background='light green')
@@ -302,9 +324,13 @@ def add_details():
     rollno_field = Entry(root)
     dob_field = Entry(root)
     class_field = Entry(root)
-    weight_field = Entry(root)
-    height_field = Entry(root)
     address_field = Entry(root)
+    mark1_field = Entry(root)
+    mark2_field = Entry(root)
+    mark3_field = Entry(root)
+    mark4_field = Entry(root)
+    mark5_field = Entry(root)
+
 
     # create a Form label
     heading = Label(root, text="Form", bg="light green")
@@ -316,19 +342,31 @@ def add_details():
     RollNo = Label(root, text="Roll.No", bg="light green")
 
     # create a DoB label
-    DoB = Label(root, text="Date of Birth", bg="light green")
+    DoB = Label(root, text="Date of Birth\n(dd-mm-yyyy)", bg="light green")
+    #Label(root, text="Choose a Date", background='gray61', foreground="white").pack(padx=20, pady=20)
+    # Create a Calendar using DateEntry
+
 
     # create a classs label
     classs = Label(root, text="Class", bg="light green")
 
-    # create a Weight label
-    Weight = Label(root, text="Weight", bg="light green")
-
-    # create a Height id label
-    Height = Label(root, text="Height", bg="light green")
-
     # create a address label
     address = Label(root, text="Address", bg="light green")
+
+    # create a mark1 label
+    mark1 = Label(root, text="mark1", bg="light green")
+
+    # create a mark2 label
+    mark2 = Label(root, text="mark2", bg="light green")
+
+    # create a mark3 label
+    mark3 = Label(root, text="mark3", bg="light green")
+
+    # create a mark4 label
+    mark4 = Label(root, text="mark4", bg="light green")
+
+    # create a mark5 label
+    mark5 = Label(root, text="mark5", bg="light green")
 
     # grid method is used for placing
     # the widgets at respective positions
@@ -338,9 +376,12 @@ def add_details():
     RollNo.grid(row=2, column=0)
     DoB.grid(row=3, column=0)
     classs.grid(row=4, column=0)
-    Weight.grid(row=5, column=0)
-    Height.grid(row=6, column=0)
-    address.grid(row=7, column=0)
+    address.grid(row=5, column=0)
+    mark1.grid(row=6, column=0)
+    mark2.grid(row=7, column=0)
+    mark3.grid(row=8, column=0)
+    mark4.grid(row=9, column=0)
+    mark5.grid(row=10, column=0)
 
 
 
@@ -365,11 +406,27 @@ def add_details():
 
     # whenever the enter key is pressed
     # then call the focus5 function
-    weight_field.bind("<Return>", focus5)
+    address_field.bind("<Return>", focus5)
 
     # whenever the enter key is pressed
     # then call the focus6 function
-    height_field.bind("<Return>", focus6)
+    mark1_field.bind("<Return>", focus6)
+
+    # whenever the enter key is pressed
+    # then call the focus7 function
+    mark2_field.bind("<Return>", focus7)
+
+    # whenever the enter key is pressed
+    # then call the focus8 function
+    mark3_field.bind("<Return>", focus8)
+
+    # whenever the enter key is pressed
+    # then call the focus9 function
+    mark4_field.bind("<Return>", focus9)
+
+    # whenever the enter key is pressed
+    # then call the focus10 function
+    #mark5_field.bind("<Return>", focus10)
 
     # grid method is used for placing
     # the widgets at respective positions
@@ -378,19 +435,25 @@ def add_details():
     rollno_field.grid(row=2, column=1, ipadx="100")
     dob_field.grid(row=3, column=1, ipadx="100")
     class_field.grid(row=4, column=1, ipadx="100")
-    weight_field.grid(row=5, column=1, ipadx="100")
-    height_field.grid(row=6, column=1, ipadx="100")
-    address_field.grid(row=7, column=1, ipadx="100")
+    address_field.grid(row=5, column=1, ipadx="100")
+    mark1_field.grid(row=6, column=1, ipadx="100")
+    mark2_field.grid(row=7, column=1, ipadx="100")
+    mark3_field.grid(row=8, column=1, ipadx="100")
+    mark4_field.grid(row=9, column=1, ipadx="100")
+    mark5_field.grid(row=10, column=1, ipadx="100")
 
     # create a Submit Button and place into the root window
     submit = Button(root, text="Submit", fg="Black",
-                    bg="Red", command=insert)
-    submit.grid(row=8, column=1)
+                    bg="#9898F5", command=insert)
+    submit.grid(row=11, column=1)
 
     # create a Back Button to the root window
     back = Button(root, text="Back to Main", fg="Black",
-                    bg="Blue", command=close_root)
+                    bg="#9898F5", command=close_root)
     back.grid(row=12, column=1)
+
+    answer = Label(root, text='',bg="light green")
+    answer.grid(row=13, column=1)
 
     # start the GUI
     root.mainloop()
@@ -437,57 +500,58 @@ def clear():
     rollno_field.delete(0, END)
     dob_field.delete(0, END)
     class_field.delete(0, END)
-    weight_field.delete(0, END)
-    height_field.delete(0, END)
     address_field.delete(0, END)
+    mark1_field.delete(0, END)
+    mark2_field.delete(0, END)
+    mark3_field.delete(0, END)
+    mark4_field.delete(0, END)
+    mark5_field.delete(0, END)
 
 
 class Student:
 
     # Constructor
-    def __init__(self, name, rollno, DoB, classs, height, weight, addr, m1 = [0,0,0] ):
+    def __init__(self, name, rollno, DoB, classs, addr, m1:int ,m2:int ,m3:int, m4:int, m5:int):
+        self.total = None
+        self.grade = None
         self.name = name
         self.rollno = rollno
         self.classs = classs
         self.DoB = DoB
-        self.height = height
-        self.weight = weight
-        self.marklist = m1
+        self.mark1 = m1
+        self.mark2 = m2
+        self.mark3 = m3
+        self.mark4 = m4
+        self.mark5 = m5
         self.address = addr
 
-    # Function to create and append new student
-    def accept(self, Name, Rollno, marks1, marks2):
-
-        # use ' int(input()) ' method to take input from user
-        ob = Student(Name, Rollno, marks1, marks2)
-        ls.append(ob)
 
     # Function to display student details
     def display(self):
         print("Name : ", self.name)
         print("RollNo : ", self.rollno)
-        print("Marks1 : ", self.marklist)
+        print("Marks1 : ", self.mark1)
         #print("Marks2 : ", ob.m2)
         print("\n")
 
-    # Search Function
-    def search(self, rn):
-        for i in range(ls.__len__()):
-            if(ls[i].rollno == rn):
-                return i
+    def calculate_grade(self):
+        self.total = self.mark1 + self.mark2 + self.mark3 + self.mark4 + self.mark5
 
-    # Delete Function
-    def delete(self, rn, obj):
-        i = obj.search(rn)
-        del ls[i]
+        if self.total >= 450:
+            self.grade = 'A'
+        elif self.total >= 400:
+            self.grade = 'B'
+        elif self.total >= 350:
+            self.grade = 'C'
+        elif self.total >= 300:
+            self.grade = 'D'
+        else:
+            self.grade = 'F'
 
-    # Update Function
-    def update(self, rn, No, obj):
-        i = obj.search(rn)
-        roll = No
-        ls[i].rollno = roll
 
     def save(self, sheet):
+
+        self.calculate_grade()
         # assigning the max row and max column
         # value upto which data is written
         # in an excel sheet to the variable
@@ -497,9 +561,14 @@ class Student:
         sheet.cell(row=current_row + 1, column=2).value = self.rollno
         sheet.cell(row=current_row + 1, column=3).value = self.DoB
         sheet.cell(row=current_row + 1, column=4).value = self.classs
-        sheet.cell(row=current_row + 1, column=5).value = self.weight
-        sheet.cell(row=current_row + 1, column=6).value = self.height
-        sheet.cell(row=current_row + 1, column=7).value = self.address
+        sheet.cell(row=current_row + 1, column=5).value = self.address
+        sheet.cell(row=current_row + 1, column=6).value = self.mark1
+        sheet.cell(row=current_row + 1, column=7).value = self.mark2
+        sheet.cell(row=current_row + 1, column=8).value = self.mark3
+        sheet.cell(row=current_row + 1, column=9).value = self.mark4
+        sheet.cell(row=current_row + 1, column=10).value = self.mark5
+        sheet.cell(row=current_row + 1, column=11).value = self.total
+        sheet.cell(row=current_row + 1, column=12).value = self.grade
 
         # save the file
         wb.save(path)
@@ -511,46 +580,85 @@ class Student:
 def insert():
     # if user not fill any entry
     # then print "empty input"
-    if (name_field.get() == "" and
-            rollno_field.get() == "" and
-            dob_field.get() == "" and
-            class_field.get() == "" and
-            weight_field.get() == "" and
-            height_field.get() == "" and
-            address_field.get() == ""):
+    if (name_field.get() == "" or
+            rollno_field.get() == "" or
+            dob_field.get() == "" or
+            class_field.get() == "" or
+            address_field.get() == "" or
+            mark1_field.get() == "" or
+            mark2_field.get() == "" or
+            mark3_field.get() == "" or
+            mark4_field.get() == "" or
+            mark5_field.get() == ""):
 
         print("empty input")
+        answer.config(text="Empty Input")
 
     else:
-
 
         # get method returns current text
         # as string which we write into
         # excel spreadsheet at particular location
         name = name_field.get()
-        rollno = rollno_field.get()
-        dob = dob_field.get()
-        classs = class_field.get()
-        weight = weight_field.get()
-        height = height_field.get()
+
+
+
         addr = address_field.get()
+        try:
+            rollno = int(rollno_field.get())
+        except ValueError:
+            answer.config(text="Please enter valid rollno")
 
-        #global class_Sheet
-        class_Sheet = wb["Class" + classs]
+        else:
 
-        # call excel function
-        excel(class_Sheet)
+            try:
+                classs = int(class_field.get())
+                if classs > 10 or classs < 1:
+                    raise ValueError()
+            except ValueError:
+                answer.config(text="Please enter valid class(1-10)")
 
-        global stud
-        stud = Student(name, rollno, dob, classs, weight, height, addr)
-        stud.save(class_Sheet)
+            else:
 
+                try:
+                    m1 = int(mark1_field.get())
 
-        # set focus on the name_field box
-        name_field.focus_set()
+                    m2 = int(mark2_field.get())
+                    m3 = int(mark3_field.get())
+                    m4 = int(mark4_field.get())
+                    m5 = int(mark5_field.get())
+                    if (m1 > 100 or m1 < 0 or
+                            m2 > 100 or m2 < 0 or
+                            m3 > 100 or m3 < 0 or
+                            m4 > 100 or m4 < 0 or
+                            m5 > 100 or m5 < 0):
+                        raise ValueError()
 
-        # call the clear() function
-        clear()
+                except ValueError:
+                    answer.config(text="Please enter valid marks(0-100)")
+
+                else:
+                    dob = dob_field.get()
+                    try:
+                        transaction_date = datetime.datetime.strptime(dob, "%d-%m-%Y")
+                    except ValueError:
+                        answer.config(text='Please enter date DD-MM-YYYY')
+                    else:
+                        #global class_Sheet
+                        class_Sheet = wb["Class" + str(classs)]
+
+                        # call excel function
+                        excel(class_Sheet)
+
+                        global stud
+                        stud = Student(name, rollno, dob, classs,  addr, m1, m2, m3, m4, m5)
+                        stud.save(class_Sheet)
+
+                        # set focus on the name_field box
+                        name_field.focus_set()
+
+                        # call the clear() function
+                        clear()
 
 def display():
     stud.display()
@@ -572,9 +680,15 @@ def close_sec():
 
 
 def open_viewdetails():
+    global update_details
+    update_details = FALSE
     sec_screen.destroy()
     view_details_screen()
-
+def open_updatedetails():
+    global update_details
+    update_details =TRUE
+    sec_screen.destroy()
+    view_details_screen()
 
 def close_root1():
     root1.destroy()
@@ -603,18 +717,39 @@ def focus3(event):
 
 # Function to set focus
 def focus4(event):
-    # set focus on the weight_field box
-    weight_field.focus_set()
-
-
-# Function to set focus
-def focus5(event):
-    # set focus on the height_field box
-    height_field.focus_set()
-
-
-# Function to set focus
-def focus6(event):
     # set focus on the address_field box
     address_field.focus_set()
+
+
+    # Function to set focus
+def focus5(event):
+    # set focus on the mark1_field box
+    mark1_field.focus_set()
+
+
+    # Function to set focus
+def focus6(event):
+    # set focus on the mark2_field box
+    mark2_field.focus_set()
+
+
+    # Function to set focus
+def focus7(event):
+    # set focus on the mark3_field box
+    mark3_field.focus_set()
+
+def focus8(event):
+    # set focus on the mark4_field box
+    mark4_field.focus_set()
+
+
+    # Function to set focus
+def focus9(event):
+    # set focus on the mark5_field box
+    mark5_field.focus_set()
+
+
+
+
+
 

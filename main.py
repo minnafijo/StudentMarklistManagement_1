@@ -10,4 +10,4 @@ if __name__ == "__main__":
     sheet.main_screen()
 
 #    sheet.read_details('5','fijo')
-    sheet.display()
+#    sheet.display()
