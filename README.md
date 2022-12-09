@@ -33,7 +33,6 @@ Then we move to the next page Student MarkList Management System where we have o
 
 ## Help
 
-Any advise for common problems or issues.
 ```
 Please keep the 'StudentDetails.xlsx' in the execution folder
 ```
