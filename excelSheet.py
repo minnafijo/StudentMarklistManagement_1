@@ -5,19 +5,8 @@ from tkinter import *
 import datetime
 import os
 
-from openpyxl.utils.exceptions import ReadOnlyWorkbookException
-
 dirname = os.path.dirname(__file__)
-path = dirname + '\StudentDetails.xlsx'
-# path = os.path.join(dirname, '\StudentMarklistManagement\StudentDetails.xlsx')
-# path = 'C:\\Users\\Minna\\Desktop\\ReDi_Python\\StudentMarklistManagement\\StudentDetails.xlsx'
-
-global stud
-global root
-global root1
-global sec_screen
-global class_Selected
-
+path = dirname + '\\StudentDetails.xlsx'
 # globally declare wb and sheet variable
 # opening the existing excel file
 wb = load_workbook(path)
@@ -28,6 +17,7 @@ sheetTemp = wb.active
 cells = {}
 
 
+# Student class for save details to excel, Calculate grade and total..
 class Student:
 
     # Constructor
@@ -206,6 +196,7 @@ def update_excel():
     else:
         close_view()
 
+
 def main_screen():
     global root1
     root1 = Tk()
@@ -340,7 +331,7 @@ def second_Screen():
     back.pack()
 
 
-def excel(sheet="Template"):
+def excel(sheet):
     # resize the width of columns in
     # excel spreadsheet
     sheet.column_dimensions['A'].width = 30
@@ -670,7 +661,7 @@ def insert():
                 else:
                     dob = dob_field.get()
                     try:
-                        transaction_date = datetime.datetime.strptime(dob, "%d-%m-%Y")
+                        transaction_date = datetime.datetime.strptime(dob, "%d-%m-%Y")  # To Check the date format
                     except ValueError:
                         answer.config(text='Please enter date DD-MM-YYYY')
                     else:
