@@ -8,11 +8,9 @@ import os
 dirname = os.path.dirname(__file__)
 path = dirname + '\\StudentDetails.xlsx'
 # globally declare wb and sheet variable
-# opening the existing excel file
-wb = load_workbook(path)
+wb = load_workbook(path)  # opening the existing excel file
 # create the sheet object
 sheetTemp = wb.active
-
 # Dictionary for storing the text widget references
 cells = {}
 
