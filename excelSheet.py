@@ -1,21 +1,22 @@
 # import openpyxl and tkinter modules
-
+import openpyxl
 from openpyxl import *
 from tkinter import *
 import datetime
 import os
 
+from openpyxl.utils.exceptions import ReadOnlyWorkbookException
+
 dirname = os.path.dirname(__file__)
 path = dirname + '\StudentDetails.xlsx'
-#path = os.path.join(dirname, '\StudentMarklistManagement\StudentDetails.xlsx')
-#path = 'C:\\Users\\Minna\\Desktop\\ReDi_Python\\StudentMarklistManagement\\StudentDetails.xlsx'
+# path = os.path.join(dirname, '\StudentMarklistManagement\StudentDetails.xlsx')
+# path = 'C:\\Users\\Minna\\Desktop\\ReDi_Python\\StudentMarklistManagement\\StudentDetails.xlsx'
 
 global stud
 global root
 global root1
 global sec_screen
 global class_Selected
-
 
 # globally declare wb and sheet variable
 # opening the existing excel file
@@ -26,13 +27,84 @@ sheetTemp = wb.active
 # Dictionary for storing the text widget references
 cells = {}
 
-#Selected class from dropdown menu
+
+class Student:
+
+    # Constructor
+    def __init__(self, name, rollno, DoB, classs, addr, m1: int, m2: int, m3: int, m4: int, m5: int):
+        self.total = None
+        self.grade = None
+        self.name = name
+        self.rollno = rollno
+        self.classs = classs
+        self.DoB = DoB
+        self.mark1 = m1
+        self.mark2 = m2
+        self.mark3 = m3
+        self.mark4 = m4
+        self.mark5 = m5
+        self.address = addr
+
+    def calculate_grade(self):
+        self.total = self.mark1 + self.mark2 + self.mark3 + self.mark4 + self.mark5
+
+        if self.total >= 450:
+            self.grade = 'A'
+        elif self.total >= 400:
+            self.grade = 'B'
+        elif self.total >= 350:
+            self.grade = 'C'
+        elif self.total >= 300:
+            self.grade = 'D'
+        else:
+            self.grade = 'F'
+
+    def save(self, sheet):
+
+        self.calculate_grade()
+        # assigning the max row and max column
+        # value upto which data is written
+        # in an excel sheet to the variable
+        current_row = sheet.max_row
+        current_column = sheet.max_column
+        sheet.cell(row=current_row + 1, column=1).value = self.name
+        sheet.cell(row=current_row + 1, column=2).value = self.rollno
+        sheet.cell(row=current_row + 1, column=3).value = self.DoB
+        sheet.cell(row=current_row + 1, column=4).value = self.classs
+        sheet.cell(row=current_row + 1, column=5).value = self.address
+        sheet.cell(row=current_row + 1, column=6).value = self.mark1
+        sheet.cell(row=current_row + 1, column=7).value = self.mark2
+        sheet.cell(row=current_row + 1, column=8).value = self.mark3
+        sheet.cell(row=current_row + 1, column=9).value = self.mark4
+        sheet.cell(row=current_row + 1, column=10).value = self.mark5
+        sheet.cell(row=current_row + 1, column=11).value = self.total
+        sheet.cell(row=current_row + 1, column=12).value = self.grade
+
+        # save the file
+        try:
+            wb.save(path)
+        except openpyxl.utils.exceptions.ReadOnlyWorkbookException:
+            answer.config(text="Please Close StudentDetails.xlsx")
+        else:
+            answer.config(text="Data Saved Succesfully")
+
+    # Function to display student details
+    def display(self):
+        print("Name : ", self.name)
+        print("RollNo : ", self.rollno)
+        print("Marks1 : ", self.mark1)
+        # print("Marks2 : ", ob.m2)
+        print("\n")
+
+
+# Selected class from dropdown menu
 def class_select():
     global class_Selected
     class_Selected = clicked.get()
     close_root1()
 
-#Selected student from dropdown menu
+
+# Selected student from dropdown menu
 def name_select():
     global name_Selected
     name_Selected = nameclicked.get()
@@ -42,6 +114,7 @@ def name_select():
 
 def view_details_screen():
     global window
+    global reply
     # Create an instance of tkinter frame
     window = Tk()
 
@@ -70,15 +143,15 @@ def view_details_screen():
         text.insert(INSERT, content)
 
     # adding all the other rows into the grid
-    for i in range(n_rows-1):
+    for i in range(n_rows - 1):
         for j in range(n_cols):
             text = Text(window, width=16, height=1)
             text.grid(row=i + 1, column=j)
-            content = df.cell(row=i+2, column=j+1).value
+            content = df.cell(row=i + 2, column=j + 1).value
             text.insert(INSERT, content)
             cells[(i, j)] = text
 
-    if update_details == TRUE:     #Save button will be visible
+    if update_details == TRUE:  # Save button will be visible
         # Create button, it will change label text
         submit = Button(window, text="Save", command=update_excel)
         submit.grid(row=15, column=8)
@@ -87,6 +160,9 @@ def view_details_screen():
     back = Button(window, text="Back to Menu", fg="Black",
                   bg="light blue", command=close_view)
     back.grid(row=15, column=1)
+
+    reply = Label(window, text='', bg="light green")
+    reply.grid(row=16, column=1)
 
     window.mainloop()
 
@@ -107,24 +183,28 @@ def update_excel():
     student_updated = FALSE
     for i in range(1, n_rows):
         for j in range(1, n_cols):
-            if df.cell(row=i+1, column=j+1).value != cells[(i-1, j)].get("1.0", "end-1c"):
-                updated_Stud_row = i+1
+            if df.cell(row=i + 1, column=j + 1).value != cells[(i - 1, j)].get("1.0", "end-1c"):
+                updated_Stud_row = i + 1
                 student_updated = TRUE
-                df.cell(row=i+1, column=j+1).value = cells[(i-1, j)].get("1.0", "end-1c")
+                df.cell(row=i + 1, column=j + 1).value = cells[(i - 1, j)].get("1.0", "end-1c")
         if student_updated == TRUE:
             m1 = int(df.cell(row=updated_Stud_row, column=6).value)
             m2 = int(df.cell(row=updated_Stud_row, column=7).value)
             m3 = int(df.cell(row=updated_Stud_row, column=8).value)
             m4 = int(df.cell(row=updated_Stud_row, column=9).value)
             m5 = int(df.cell(row=updated_Stud_row, column=10).value)
-            total = m1+m2+m3+m4+m5
+            total = m1 + m2 + m3 + m4 + m5
             df.cell(row=updated_Stud_row, column=11).value = total
             df.cell(row=updated_Stud_row, column=12).value = calc_grade(total)
-            student_updated=FALSE
-                #obj=Student(df.cell(row=i+1, column=j+1).value)
+            student_updated = FALSE
+            # obj=Student(df.cell(row=i+1, column=j+1).value)
 
-    wb.save(path)
-
+    try:
+        wb.save(path)
+    except:
+        reply.config(text="Not Saved. Close StudentDetails.xlsx")
+    else:
+        close_view()
 
 def main_screen():
     global root1
@@ -169,9 +249,9 @@ def main_screen():
     submit = Button(root1, text="Enter", command=class_select).pack()
 
     # create a Submit Button and place into the root window
-    #submit = Button(root1, text="Add Details", fg="Black",
-                    #bg="Red", command=add_details)
-    #submit.grid(row=8, column=8)
+    # submit = Button(root1, text="Add Details", fg="Black",
+    # bg="Red", command=add_details)
+    # submit.grid(row=8, column=8)
     # start the GUI
     root1.mainloop()
 
@@ -191,7 +271,6 @@ def select_details_screen():
     list_name()
     print("Selected class", class_Selected)
     print("List of students:", stud_names)
-
 
     global nameclicked
     # datatype of menu text
@@ -235,34 +314,33 @@ def second_Screen():
     heading1.pack()
 
     # create a Form label
-    #heading2 = Label(sec_screen, text="Mark List", bg="light green")
-    #heading2.grid(row=0, column=5)
+    # heading2 = Label(sec_screen, text="Mark List", bg="light green")
+    # heading2.grid(row=0, column=5)
 
     # create a Submit Button and place into the root window
     adddetails = Button(sec_screen, text="Add Details", fg="Black",
-                    bg="Yellow", command = add_details)
+                        bg="Yellow", command=add_details)
     adddetails.pack()
 
     viewdetails = Button(sec_screen, text="View Details", fg="Black",
-                        bg="Yellow", command=open_viewdetails)
+                         bg="Yellow", command=open_viewdetails)
     viewdetails.pack()
 
     updatedetails = Button(sec_screen, text="Update Details", fg="Black",
-                         bg="Yellow", command=open_updatedetails)
+                           bg="Yellow", command=open_updatedetails)
     updatedetails.pack()
 
-    #deletedetails = Button(sec_screen, text="Delete Details", fg="Black",
-                           #bg="Yellow", command=select_details_screen)
-    #deletedetails.grid(row=6, column=3)
+    # deletedetails = Button(sec_screen, text="Delete Details", fg="Black",
+    # bg="Yellow", command=select_details_screen)
+    # deletedetails.grid(row=6, column=3)
 
     # create a Back Button to the root window
     back = Button(sec_screen, text="Back to Main", fg="Black",
-                    bg="light blue", command=close_sec)
+                  bg="light blue", command=close_sec)
     back.pack()
 
 
-
-def excel(sheet = "Template"):
+def excel(sheet="Template"):
     # resize the width of columns in
     # excel spreadsheet
     sheet.column_dimensions['A'].width = 30
@@ -312,7 +390,6 @@ def add_details():
     global mark5_field
     global answer
 
-
     root = Tk()
     # set the background colour of GUI window
     root.configure(background='light green')
@@ -338,7 +415,6 @@ def add_details():
     mark4_field = Entry(root)
     mark5_field = Entry(root)
 
-
     # create a Form label
     heading = Label(root, text="Form", bg="light green")
 
@@ -350,9 +426,8 @@ def add_details():
 
     # create a DoB label
     DoB = Label(root, text="Date of Birth\n(dd-mm-yyyy)", bg="light green")
-    #Label(root, text="Choose a Date", background='gray61', foreground="white").pack(padx=20, pady=20)
+    # Label(root, text="Choose a Date", background='gray61', foreground="white").pack(padx=20, pady=20)
     # Create a Calendar using DateEntry
-
 
     # create a classs label
     classs = Label(root, text="Class", bg="light green")
@@ -389,8 +464,6 @@ def add_details():
     mark3.grid(row=8, column=0)
     mark4.grid(row=9, column=0)
     mark5.grid(row=10, column=0)
-
-
 
     # bind method of widget is used for
     # the binding the function with the events
@@ -433,7 +506,7 @@ def add_details():
 
     # whenever the enter key is pressed
     # then call the focus10 function
-    #mark5_field.bind("<Return>", focus10)
+    # mark5_field.bind("<Return>", focus10)
 
     # grid method is used for placing
     # the widgets at respective positions
@@ -456,10 +529,10 @@ def add_details():
 
     # create a Back Button to the root window
     back = Button(root, text="Back to Main", fg="Black",
-                    bg="#9898F5", command=close_root)
+                  bg="#9898F5", command=close_root)
     back.grid(row=12, column=1)
 
-    answer = Label(root, text='',bg="light green")
+    answer = Label(root, text='', bg="light green")
     answer.grid(row=13, column=1)
 
     # start the GUI
@@ -467,7 +540,7 @@ def add_details():
 
 
 def list_name():
-    #load worksheet
+    # load worksheet
     workSheet = wb[class_Selected]
     second_column = workSheet['A']
     # Create the list
@@ -478,12 +551,12 @@ def list_name():
 
 def find_student(name: str):
     index = stud_names.index(name)
-    return index+2
+    return index + 2
 
 
-#to find and read student details row into an object from excel
+# to find and read student details row into an object from excel
 def read_details(name: str):
-    #read details
+    # read details
     global class_Selected
     print("read details")
     row_index = find_student(name)
@@ -494,12 +567,14 @@ def read_details(name: str):
     stud_details = [cell.value for cell in stud_row[:]]
     print(stud_details)
 
-#to display student list drop down menu.
+
+# to display student list drop down menu.
 def show_student():
-    #display student names.
+    # display student names.
     print("show details")
 
-#Function to calculate garde
+
+# Function to calculate garde
 
 def calc_grade(total):
     if total >= 450:
@@ -515,6 +590,7 @@ def calc_grade(total):
 
     return grade
 
+
 # Function for clearing the
 # contents of text entry boxes
 def clear():
@@ -529,73 +605,6 @@ def clear():
     mark3_field.delete(0, END)
     mark4_field.delete(0, END)
     mark5_field.delete(0, END)
-
-
-class Student:
-
-    # Constructor
-    def __init__(self, name, rollno, DoB, classs, addr, m1:int ,m2:int ,m3:int, m4:int, m5:int):
-        self.total = None
-        self.grade = None
-        self.name = name
-        self.rollno = rollno
-        self.classs = classs
-        self.DoB = DoB
-        self.mark1 = m1
-        self.mark2 = m2
-        self.mark3 = m3
-        self.mark4 = m4
-        self.mark5 = m5
-        self.address = addr
-
-
-    # Function to display student details
-    def display(self):
-        print("Name : ", self.name)
-        print("RollNo : ", self.rollno)
-        print("Marks1 : ", self.mark1)
-        #print("Marks2 : ", ob.m2)
-        print("\n")
-
-    def calculate_grade(self):
-        self.total = self.mark1 + self.mark2 + self.mark3 + self.mark4 + self.mark5
-
-        if self.total >= 450:
-            self.grade = 'A'
-        elif self.total >= 400:
-            self.grade = 'B'
-        elif self.total >= 350:
-            self.grade = 'C'
-        elif self.total >= 300:
-            self.grade = 'D'
-        else:
-            self.grade = 'F'
-
-
-    def save(self, sheet):
-
-        self.calculate_grade()
-        # assigning the max row and max column
-        # value upto which data is written
-        # in an excel sheet to the variable
-        current_row = sheet.max_row
-        current_column = sheet.max_column
-        sheet.cell(row=current_row + 1, column=1).value = self.name
-        sheet.cell(row=current_row + 1, column=2).value = self.rollno
-        sheet.cell(row=current_row + 1, column=3).value = self.DoB
-        sheet.cell(row=current_row + 1, column=4).value = self.classs
-        sheet.cell(row=current_row + 1, column=5).value = self.address
-        sheet.cell(row=current_row + 1, column=6).value = self.mark1
-        sheet.cell(row=current_row + 1, column=7).value = self.mark2
-        sheet.cell(row=current_row + 1, column=8).value = self.mark3
-        sheet.cell(row=current_row + 1, column=9).value = self.mark4
-        sheet.cell(row=current_row + 1, column=10).value = self.mark5
-        sheet.cell(row=current_row + 1, column=11).value = self.total
-        sheet.cell(row=current_row + 1, column=12).value = self.grade
-
-        # save the file
-        wb.save(path)
-        print("Succesfully Saved")
 
 
 # Function to take data from GUI
@@ -623,8 +632,6 @@ def insert():
         # as string which we write into
         # excel spreadsheet at particular location
         name = name_field.get()
-
-
 
         addr = address_field.get()
         try:
@@ -667,14 +674,14 @@ def insert():
                     except ValueError:
                         answer.config(text='Please enter date DD-MM-YYYY')
                     else:
-                        #global class_Sheet
+                        # global class_Sheet
                         class_Sheet = wb["Class" + str(classs)]
 
                         # call excel function
                         excel(class_Sheet)
 
                         global stud
-                        stud = Student(name, rollno, dob, classs,  addr, m1, m2, m3, m4, m5)
+                        stud = Student(name, rollno, dob, classs, addr, m1, m2, m3, m4, m5)
                         stud.save(class_Sheet)
 
                         # set focus on the name_field box
@@ -682,6 +689,7 @@ def insert():
 
                         # call the clear() function
                         clear()
+
 
 def display():
     stud.display()
@@ -707,17 +715,18 @@ def open_viewdetails():
     update_details = FALSE
     sec_screen.destroy()
     view_details_screen()
+
+
 def open_updatedetails():
     global update_details
-    update_details =TRUE
+    update_details = TRUE
     sec_screen.destroy()
     view_details_screen()
+
 
 def close_root1():
     root1.destroy()
     second_Screen()
-
-
 
 
 # Function to set focus (cursor)
@@ -743,36 +752,35 @@ def focus4(event):
     # set focus on the address_field box
     address_field.focus_set()
 
-
     # Function to set focus
+
+
 def focus5(event):
     # set focus on the mark1_field box
     mark1_field.focus_set()
 
-
     # Function to set focus
+
+
 def focus6(event):
     # set focus on the mark2_field box
     mark2_field.focus_set()
 
-
     # Function to set focus
+
+
 def focus7(event):
     # set focus on the mark3_field box
     mark3_field.focus_set()
+
 
 def focus8(event):
     # set focus on the mark4_field box
     mark4_field.focus_set()
 
-
     # Function to set focus
+
+
 def focus9(event):
     # set focus on the mark5_field box
     mark5_field.focus_set()
-
-
-
-
-
-
